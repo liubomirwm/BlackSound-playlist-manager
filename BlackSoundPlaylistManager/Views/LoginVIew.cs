@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlackSound_playlist_manager
+namespace BlackSound_playlist_manager.Views
 {
-    class Program
+    public class LoginVIew
     {
-        static void Main(string[] args)
+        public void Show()
         {
+            while
         }
     }
 }
