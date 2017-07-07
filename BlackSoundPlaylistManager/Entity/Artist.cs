@@ -9,6 +9,5 @@ namespace BlackSound_playlist_manager.Entity
     public class Artist : BaseEntity
     {
         public string Name { get; set; }
-        public List<int> Songs { get; set; }
     }
 }

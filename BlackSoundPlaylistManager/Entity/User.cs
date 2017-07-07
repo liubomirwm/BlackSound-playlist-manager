@@ -12,6 +12,5 @@ namespace BlackSound_playlist_manager.Entity
         public string Password { get; set; }
         public string DisplayName { get; set; }
         public bool IsAdministrator { get; set; }
-        public List<int> Playlists { get; set; }
     }
 }

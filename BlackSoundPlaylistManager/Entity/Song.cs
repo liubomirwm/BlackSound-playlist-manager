@@ -10,6 +10,5 @@ namespace BlackSound_playlist_manager.Entity
     {
         public string Title { get; set; }
         public short Year { get; set; }
-        public List<int> Artists { get; set; }
     }
 }

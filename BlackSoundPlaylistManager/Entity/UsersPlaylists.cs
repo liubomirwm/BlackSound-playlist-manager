@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace BlackSound_playlist_manager.Entity
 {
-    public class Playlist : BaseEntity
+    public class UsersPlaylists
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public bool IsPublic { get; set; }
+        public int UserId { get; set; }
+        public int PlaylistId { get; set; }
     }
 }
