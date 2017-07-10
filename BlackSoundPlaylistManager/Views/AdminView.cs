@@ -1,4 +1,6 @@
-﻿using BlackSound_playlist_manager.Enums;
+﻿using BlackSound_playlist_manager.Entity;
+using BlackSound_playlist_manager.Enums;
+using BlackSound_playlist_manager.Repository;
 using BlackSound_playlist_manager.Services;
 using System;
 using System.Collections.Generic;
@@ -17,19 +19,16 @@ namespace BlackSound_playlist_manager.Views
                 AdminViewOption selectedOption = RenderMenu();
                 switch (selectedOption)
                 {
-                    case AdminViewOption.ReadSong:
-                        
-                    case AdminViewOption.CreateSong:
+                    case AdminViewOption.ManageSongs:
+                        SongsView songsView = new SongsView();
+                        //songsView.Show(); TODO after ArtistsManagementView is done.
                         break;
-                    case AdminViewOption.UpdateSong:
+                    case AdminViewOption.ManageArtists:
+                        ArtistsView artistsView = new ArtistsView();
+                        artistsView.Show();
                         break;
-                    case AdminViewOption.DeleteSong:
-                        break;
-                    case AdminViewOption.Logout:
-                        AuthenticationService.LoggedUser = null;
-                        return;
                     default:
-                        throw new NotImplementedException("Reached default: this shouldn't happen in this case!!");
+                        break;
                 }
             }
         }
@@ -37,30 +36,65 @@ namespace BlackSound_playlist_manager.Views
         public AdminViewOption RenderMenu()
         {
             RenderMenu:
-            Console.WriteLine("[R]ead song");
-            Console.WriteLine("[C]reate song");
-            Console.WriteLine("[U]pdate song");
-            Console.WriteLine("[D]elete song");
-            Console.WriteLine("[L]ogout");
-            Console.WriteLine("Press one of the above keys to select option.");
+            Console.Clear();
+            Console.WriteLine("Manage [S]ongs");
+            Console.WriteLine("Manage [A]rtists");
+            Console.WriteLine("Press one of the available keys to select option.");
             ConsoleKeyInfo cki = Console.ReadKey(true);
             switch (cki.Key)
             {
-                case ConsoleKey.C:
-                    return AdminViewOption.CreateSong;
-                case ConsoleKey.R:
-                    return AdminViewOption.ReadSong;
-                case ConsoleKey.U:
-                    return AdminViewOption.UpdateSong;
-                case ConsoleKey.D:
-                    return AdminViewOption.DeleteSong;
-                case ConsoleKey.L:
-                    return AdminViewOption.Logout;
+                case ConsoleKey.S:
+                    return AdminViewOption.ManageSongs;
+                case ConsoleKey.A:
+                    return AdminViewOption.ManageArtists;
                 default:
                     Console.WriteLine("You have pressed an invalid option. Try again with one of the available ones above.");
                     Console.ReadKey(true);
                     goto RenderMenu;
             }
+        }
+
+        public void ReadSong() //To implement after CreateSong() is ready.
+        {
+
+        }
+
+        public void CreateSong()
+        {
+            Console.Clear();
+            CreateSong:
+            Song newSong = new Song();
+            Console.Write("Enter new song's title: ");
+            string inputSongTitle = Console.ReadLine();
+            if (inputSongTitle.Length == 0)
+            {
+                Console.WriteLine("Song title cannot be empty. Try again!!");
+                Console.ReadKey(true);
+                goto CreateSong;
+            }
+            newSong.Title = inputSongTitle;
+            Console.Write("Enter song release year: ");
+            short inputYear;
+            bool isShort = short.TryParse(Console.ReadLine(), out inputYear);
+            while (isShort == false)
+            {
+                Console.WriteLine("Year should be a digit. Try again!!");
+                Console.Write("Enter song release year: ");
+                isShort = short.TryParse(Console.ReadLine(), out inputYear);
+            }
+
+            if ((short)DateTime.Now.Year < inputYear || inputYear < 1850)
+            {
+                Console.WriteLine("Input year cannot be before 1500 or after the current year. Try again!!");
+                Console.Write("Enter song release year: ");
+                isShort = short.TryParse(Console.ReadLine(), out inputYear);
+            }
+
+            newSong.Year = inputYear;
+            SongsRepository songsRepo = new SongsRepository("songs.txt");
+            songsRepo.Save(newSong);
+            Console.WriteLine("Song saved successfully!!");
+            Console.ReadKey(true);
         }
     }
 }

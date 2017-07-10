@@ -41,5 +41,15 @@ namespace BlackSound_playlist_manager.Repository
                 fs.Dispose();
             }
         }
+
+        public override void PopulateEntity(StreamReader sr, User item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void WriteEntity(StreamWriter sw, User item)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

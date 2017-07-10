@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace BlackSound_playlist_manager.Enums
 {
-    public enum AdminViewOption
+    public enum ArtistsManagementOption
     {
-        ManageSongs, ManageArtists
+        AddArtist, ViewArtists, EditArtist, DeleteArtist, Back
     }
 }

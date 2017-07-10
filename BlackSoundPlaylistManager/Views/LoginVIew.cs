@@ -13,6 +13,7 @@ namespace BlackSound_playlist_manager.Views
         {
             while (true)
             {
+                Console.Clear();
                 Console.Write("Email: ");
                 string inputEmail = Console.ReadLine();
                 Console.Write("Password: ");

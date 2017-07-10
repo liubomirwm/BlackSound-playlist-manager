@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlackSound_playlist_manager.Enums
+namespace BlackSound_playlist_manager.Views
 {
-    public enum AdminViewOption
+    public class SongsView
     {
-        ManageSongs, ManageArtists
     }
 }
