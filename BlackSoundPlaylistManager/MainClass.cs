@@ -16,7 +16,7 @@ namespace BlackSound_playlist_manager
             {
                 if (AuthenticationService.LoggedUser == null) // the check for null is to prevent stepping into if logged in. You really don't want to touch it (or the ones below). ;)
                 {
-                    LoginVIew loginView = new LoginVIew();
+                    LoginView loginView = new LoginView();
                     loginView.Show();
                 }
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BlackSound_playlist_manager.Views
 {
-    public class LoginVIew
+    public class LoginView
     {
         public void Show()
         {

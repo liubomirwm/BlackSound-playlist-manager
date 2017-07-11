@@ -1,5 +1,6 @@
 ﻿using BlackSound_playlist_manager.Entity;
 using BlackSound_playlist_manager.Enums;
+using BlackSound_playlist_manager.Helpers;
 using BlackSound_playlist_manager.Repository;
 using BlackSound_playlist_manager.Services;
 using System;
@@ -91,7 +92,7 @@ namespace BlackSound_playlist_manager.Views
             }
 
             newSong.Year = inputYear;
-            SongsRepository songsRepo = new SongsRepository("songs.txt");
+            SongsRepository songsRepo = new SongsRepository(Constants.SongsPath);
             songsRepo.Save(newSong);
             Console.WriteLine("Song saved successfully!!");
             Console.ReadKey(true);

@@ -52,6 +52,7 @@
     <Compile Include="Entity\UsersPlaylists.cs" />
     <Compile Include="Enums\AdminViewOption.cs" />
     <Compile Include="Enums\ArtistsManagementOption.cs" />
+    <Compile Include="Helpers\Constants.cs" />
     <Compile Include="MainClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\ArtistsRepository.cs" />
@@ -61,7 +62,7 @@
     <Compile Include="Services\AuthenticationService.cs" />
     <Compile Include="Views\AdminView.cs" />
     <Compile Include="Views\ArtistsView.cs" />
-    <Compile Include="Views\LoginVIew.cs" />
+    <Compile Include="Views\LoginView.cs" />
     <Compile Include="Views\SongsView.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -21,7 +21,7 @@ namespace BlackSound_playlist_manager.Repository
         {
             if (item.Id > 0)
             {
-                //Update(item);
+                Update(item);
             }
             else
             {
@@ -43,6 +43,41 @@ namespace BlackSound_playlist_manager.Repository
                 sw.Dispose();
                 fs.Dispose();
             }
+        }
+
+        public void Update(T item)
+        {
+            FileStream ifs = new FileStream(this.filePath, FileMode.OpenOrCreate);
+            StreamReader sr = new StreamReader(ifs);
+            string tempFilePath = "temp." + this.filePath;
+            FileStream ofs = new FileStream(tempFilePath, FileMode.OpenOrCreate);
+            StreamWriter sw = new StreamWriter(ofs);
+            try
+            {
+                while (!sr.EndOfStream)
+                {
+                    T currentItem = new T();
+                    PopulateEntity(sr, currentItem);
+                    if (currentItem.Id == item.Id)
+                    {
+                        WriteEntity(sw, item);
+                    }
+                    else
+                    {
+                        WriteEntity(sw, currentItem);
+                    }
+                }
+            }
+            finally
+            {
+                sr.Dispose();
+                ifs.Dispose();
+                sw.Dispose();
+                ofs.Dispose();
+            }
+
+            File.Delete(this.filePath);
+            File.Move(tempFilePath, this.filePath);
         }
 
         private int GetNextId()
@@ -69,6 +104,99 @@ namespace BlackSound_playlist_manager.Repository
             }
 
             return id;
+        }
+
+        public List<T> GetAll(Func<T, bool> filter = null)
+        {
+            List<T> items = new List<T>();
+            FileStream fs = new FileStream(this.filePath, FileMode.OpenOrCreate);
+            StreamReader sr = new StreamReader(fs);
+            try
+            {
+                while (!sr.EndOfStream)
+                {
+                    T item = new T();
+                    PopulateEntity(sr, item);
+                    items.Add(item);
+                }
+
+                if (filter == null)
+                {
+                    return items;
+                }
+                else
+                {
+                    var query = items.Where(filter);
+
+                    List<T> filteredItems = new List<T>();
+                    foreach (var item in query)
+                    {
+                        filteredItems.Add(item);
+                    }
+                    return filteredItems;
+                }
+            }
+            finally
+            {
+                sr.Dispose();
+                fs.Dispose();
+            }
+        }
+
+        public void Delete(T itemForDeletion)
+        {
+            string tempFilePath = "temp." + this.filePath;
+            FileStream ifs = new FileStream(this.filePath, FileMode.OpenOrCreate);
+            StreamReader sr = new StreamReader(ifs);
+
+            FileStream ofs = new FileStream(tempFilePath, FileMode.OpenOrCreate);
+            StreamWriter sw = new StreamWriter(ofs);
+            try
+            {
+                while (!sr.EndOfStream)
+                {
+                    T currentItem = new T();
+                    PopulateEntity(sr, currentItem);
+                    if (currentItem.Id != itemForDeletion.Id)
+                    {
+                        WriteEntity(sw, currentItem);
+                    }
+                }
+            }
+            finally
+            {
+                sr.Dispose();
+                ifs.Dispose();
+                sw.Dispose();
+                ofs.Dispose();
+            }
+
+            File.Delete(this.filePath);
+            File.Move(tempFilePath, this.filePath);
+        }
+
+        public bool EntityExists(Func<T, bool> filter)
+        {
+            List<T> items = new List<T>();
+            FileStream fs = new FileStream(this.filePath, FileMode.OpenOrCreate);
+            StreamReader sr = new StreamReader(fs);
+            try
+            {
+                while (!sr.EndOfStream)
+                {
+                    T item = new T();
+                    PopulateEntity(sr, item);
+                    items.Add(item);
+                }
+
+                bool isExisting = items.Any(filter);
+                return isExisting;
+            }
+            finally
+            {
+                sr.Dispose();
+                fs.Dispose();
+            }
         }
 
         public abstract void PopulateEntity(StreamReader sr, T item);
