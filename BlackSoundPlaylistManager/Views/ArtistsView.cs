@@ -34,7 +34,7 @@ namespace BlackSound_playlist_manager.Views
                     case ArtistsManagementOption.Back:
                         return;
                     default:
-                        break;
+                        throw new NotImplementedException("Reached default: this shouldn't happen");
                 }
             }
         }
@@ -72,8 +72,10 @@ namespace BlackSound_playlist_manager.Views
             }
         }
 
-        internal void AddArtist()
+        internal static int AddArtist()
         {
+
+            // It is possible to avoid the goto keyword as in SongsView.AddSong().
             AddArtist:
             Console.Clear();
             Console.Write("Enter new artist name: ");
@@ -90,13 +92,14 @@ namespace BlackSound_playlist_manager.Views
             {
                 Console.WriteLine("The artist already exists in the database!");
                 Console.ReadKey(true);
-                return;
+                return default(int);
             }
             Artist artist = new Artist();
             artist.Name = inputArtistName;
-            artistsRepo.Save(artist);
+            int returnId = artistsRepo.Save(artist);
             Console.WriteLine("Artist saved successfully!");
             Console.ReadKey(true);
+            return returnId;
         }
 
         internal void ViewArtists()
@@ -125,6 +128,7 @@ namespace BlackSound_playlist_manager.Views
                 Console.WriteLine("************************************");
                 Console.WriteLine("Id: {0}", artistEntity.Id);
                 Console.WriteLine("Artist name: {0}", artistEntity.Name);
+                Console.WriteLine("************************************");
             }
             Console.WriteLine();
             Console.Write("Enter id to edit: ");

@@ -17,19 +17,21 @@ namespace BlackSound_playlist_manager.Repository
             this.filePath = filePath;
         }
 
-        public void Save(T item)
+        public int Save(T item)
         {
+            int returnId;
             if (item.Id > 0)
             {
-                Update(item);
+                returnId = Update(item);
             }
             else
             {
-                Insert(item);
+                returnId = Insert(item);
             }
+            return returnId;
         }
 
-        public void Insert(T item)
+        public int Insert(T item)
         {
             item.Id = GetNextId();
             FileStream fs = new FileStream(this.filePath, FileMode.Append);
@@ -37,6 +39,7 @@ namespace BlackSound_playlist_manager.Repository
             try
             {
                 WriteEntity(sw, item);
+                return item.Id;
             }
             finally
             {
@@ -45,7 +48,7 @@ namespace BlackSound_playlist_manager.Repository
             }
         }
 
-        public void Update(T item)
+        public int Update(T item)
         {
             FileStream ifs = new FileStream(this.filePath, FileMode.OpenOrCreate);
             StreamReader sr = new StreamReader(ifs);
@@ -61,10 +64,12 @@ namespace BlackSound_playlist_manager.Repository
                     if (currentItem.Id == item.Id)
                     {
                         WriteEntity(sw, item);
+                        return item.Id;
                     }
                     else
                     {
                         WriteEntity(sw, currentItem);
+                        return item.Id;
                     }
                 }
             }
@@ -78,6 +83,7 @@ namespace BlackSound_playlist_manager.Repository
 
             File.Delete(this.filePath);
             File.Move(tempFilePath, this.filePath);
+            return default(int);
         }
 
         private int GetNextId()

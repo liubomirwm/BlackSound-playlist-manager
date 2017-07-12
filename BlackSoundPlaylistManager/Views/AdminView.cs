@@ -22,7 +22,7 @@ namespace BlackSound_playlist_manager.Views
                 {
                     case AdminViewOption.ManageSongs:
                         SongsView songsView = new SongsView();
-                        //songsView.Show(); TODO after ArtistsManagementView is done.
+                        songsView.Show();
                         break;
                     case AdminViewOption.ManageArtists:
                         ArtistsView artistsView = new ArtistsView();

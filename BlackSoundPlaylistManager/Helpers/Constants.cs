@@ -10,5 +10,7 @@ namespace BlackSound_playlist_manager.Helpers
     {
         public static string ArtistsPath = "artists.txt";
         public static string SongsPath = "songs.txt";
+        public static string PlaylistsSongsPath = "playlistssongs.txt";
+        public static string SongsArtistsPath = "songsartists.txt";
     }
 }
