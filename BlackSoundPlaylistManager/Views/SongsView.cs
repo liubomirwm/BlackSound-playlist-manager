@@ -26,7 +26,7 @@ namespace BlackSound_playlist_manager.Views
                         EditSong();
                         break;
                     case SongsViewOptions.ViewSongs:
-                        //ViewArtists();
+                        ViewSongs();
                         break;
                     case SongsViewOptions.DeleteSong:
                         //DeleteArtist();
@@ -74,17 +74,6 @@ namespace BlackSound_playlist_manager.Views
 
         public void AddSong()
         {
-            //AddSong:
-            //Console.Clear();
-            //Console.Write("Enter new song name: ");
-            //string inputSongTitle = Console.ReadLine();
-            //if (inputSongTitle.Length < 1)
-            //{
-            //    Console.WriteLine("Song title cannot be empty. Try again!!");
-            //    Console.ReadKey(true);
-            //    goto AddSong;
-            //}
-
             string inputSongTitle;
             bool isEmptyName = false;
             do
@@ -261,6 +250,48 @@ namespace BlackSound_playlist_manager.Views
             Console.WriteLine("Song edited successfully!");
             Console.ReadKey(true);
 
+
+        }
+
+        public void ViewSongs()
+        {
+            SongsRepository songsRepo = new SongsRepository(Constants.SongsPath);
+            SongsArtistsRepository songsArtistsRepo = new SongsArtistsRepository(Constants.SongsArtistsPath);
+            ArtistsRepository artistsRepo = new ArtistsRepository(Constants.ArtistsPath);
+            List<Song> songs = songsRepo.GetAll();
+            Console.Clear();
+            foreach (Song song in songs)
+            {
+                Console.WriteLine("********************************");
+                Console.WriteLine("Id: {0}", song.Id);
+                Console.WriteLine("Song title: {0}", song.Title);
+                Console.WriteLine("Song release year: {0}", song.Year);
+                List<SongsArtists> songsArtists = songsArtistsRepo.GetAll(sa => sa.SongId == song.Id);
+                List<Artist> artists = new List<Artist>();
+                foreach (SongsArtists songArtistItem in songsArtists)
+                {
+                    int artistId = songArtistItem.ArtistId;
+                    Artist artist = artistsRepo.GetAll(a => a.Id == songArtistItem.ArtistId).FirstOrDefault();
+                    artists.Add(artist);
+                }
+
+                if (artists.Count == 1)
+                {
+                    Console.WriteLine("Artist: {0}", artists[0].Name);
+                }
+                else
+                {
+                    Console.Write("Artists: ");
+                    int end = artists.Count - 1;
+                    for (int i = 0; i < end; i++)
+                    {
+                        Console.WriteLine("{0}, ", artists[i].Name);
+                    }
+                    Console.WriteLine(artists[end]);
+                }
+                Console.WriteLine("********************************");
+            }
+            Console.ReadKey(true);
 
         }
     }
