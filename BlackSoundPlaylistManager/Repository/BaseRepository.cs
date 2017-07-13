@@ -64,12 +64,10 @@ namespace BlackSound_playlist_manager.Repository
                     if (currentItem.Id == item.Id)
                     {
                         WriteEntity(sw, item);
-                        return item.Id;
                     }
                     else
                     {
                         WriteEntity(sw, currentItem);
-                        return item.Id;
                     }
                 }
             }
@@ -83,7 +81,7 @@ namespace BlackSound_playlist_manager.Repository
 
             File.Delete(this.filePath);
             File.Move(tempFilePath, this.filePath);
-            return default(int);
+            return item.Id;
         }
 
         private int GetNextId()

@@ -23,7 +23,7 @@ namespace BlackSound_playlist_manager.Views
                         AddSong();
                         break;
                     case SongsViewOptions.EditSong:
-                        //EditArtist();
+                        EditSong();
                         break;
                     case SongsViewOptions.ViewSongs:
                         //ViewArtists();
@@ -175,6 +175,93 @@ namespace BlackSound_playlist_manager.Views
             songsArtistsRepo.Save(songArtistEntity);
             Console.WriteLine("Song saved successfully!");
             Console.ReadKey(true);
+        }
+
+        public void EditSong()
+        {
+            SongsRepository songsRepo = new SongsRepository(Constants.SongsPath);
+            List<Song> songs = songsRepo.GetAll();
+            Console.Clear();
+            foreach (Song songEntity in songs)
+            {
+                Console.WriteLine("************************************");
+                Console.WriteLine("Id: {0}", songEntity.Id);
+                Console.WriteLine("Song Title: {0}", songEntity.Title);
+                Console.WriteLine("Song release year: {0}", songEntity.Year);
+                Console.WriteLine("************************************");
+            }
+            Console.WriteLine();
+            int editId;
+            bool isIntId;
+            do
+            {
+                Console.Write("Enter song id to edit: ");
+                isIntId = int.TryParse(Console.ReadLine(), out editId);
+                if (isIntId == false)
+                {
+                    Console.WriteLine("IDs can only be integer numbers. Try again!!");
+                    Console.ReadKey(true);
+                }
+            }
+            while (isIntId == false);
+
+            SongsRepository songRepo = new SongsRepository(Constants.SongsPath);
+            Song song = songRepo.GetAll(s => s.Id == editId).FirstOrDefault();
+            if (song == null)
+            {
+                Console.WriteLine("No song with that Id exists!");
+                Console.ReadKey(true);
+                return;
+            }
+            Console.WriteLine("Old song title: {0}", song.Title);
+            string newSongTitle;
+            bool isEmptyName;
+            do
+            {
+                Console.Write("New song title: ");
+                newSongTitle = Console.ReadLine();
+                isEmptyName = string.IsNullOrWhiteSpace(newSongTitle);
+                if (isEmptyName)
+                {
+                    Console.WriteLine("Song name cannot be empty. Try again!!");
+                    Console.ReadKey();
+                }
+            } while (isEmptyName == true);
+
+            song.Title = newSongTitle;
+
+            short newSongReleaseYear;
+            bool isIntYear = false;
+            bool isCurrentOrPastYear = false;
+            Console.WriteLine("Old song release year: {0}", song.Year);
+            do
+            {
+                Console.Write("New song release year: ");
+                isIntYear = short.TryParse(Console.ReadLine(), out newSongReleaseYear);
+                if (isIntYear == false)
+                {
+                    Console.WriteLine("Song release year can only be an integer number. Try Again!!");
+                    Console.ReadKey();
+                }
+
+                if (DateTime.Now.Year >= newSongReleaseYear)
+                {
+                    isCurrentOrPastYear = true;
+                }
+
+                if (isCurrentOrPastYear == false)
+                {
+                    Console.WriteLine("Song release year cannot be after the current year. Try again!!");
+                    Console.ReadKey(true);
+                }
+            } while (isIntYear == false || isCurrentOrPastYear == false);
+
+            song.Year = newSongReleaseYear;
+            songsRepo.Save(song);
+            Console.WriteLine("Song edited successfully!");
+            Console.ReadKey(true);
+
+
         }
     }
 }
