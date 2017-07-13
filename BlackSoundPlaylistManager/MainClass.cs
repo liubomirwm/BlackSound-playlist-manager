@@ -10,7 +10,7 @@ namespace BlackSound_playlist_manager
 {
     class MainClass
     {
-        static void Main(string[] args)
+        static void Main(string[] args) //IMPORTANT: To implement DeleteArtist!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         {
             while (true)
             {

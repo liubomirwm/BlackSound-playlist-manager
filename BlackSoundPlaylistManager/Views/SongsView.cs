@@ -29,7 +29,7 @@ namespace BlackSound_playlist_manager.Views
                         ViewSongs();
                         break;
                     case SongsViewOptions.DeleteSong:
-                        //DeleteArtist();
+                        DeleteSong();
                         break;
                     case SongsViewOptions.Back:
                         return;
@@ -253,7 +253,7 @@ namespace BlackSound_playlist_manager.Views
 
         }
 
-        public void ViewSongs()
+        public void ViewSongs(bool calledFromDelete = false)
         {
             SongsRepository songsRepo = new SongsRepository(Constants.SongsPath);
             SongsArtistsRepository songsArtistsRepo = new SongsArtistsRepository(Constants.SongsArtistsPath);
@@ -291,8 +291,37 @@ namespace BlackSound_playlist_manager.Views
                 }
                 Console.WriteLine("********************************");
             }
-            Console.ReadKey(true);
+            if (calledFromDelete == false)
+            {
+                Console.ReadKey(true);
+            }
 
+        }
+
+        public void DeleteSong()
+        {
+            ViewSongs(true);
+            Console.WriteLine();
+            Console.Write("Enter id to delete: ");
+            int deleteId = Convert.ToInt32(Console.ReadLine());
+            SongsArtistsRepository songsArtistsRepo = new SongsArtistsRepository(Constants.SongsArtistsPath);
+            List<SongsArtists> songsArtistsEntities = songsArtistsRepo.GetAll(sa => sa.SongId == deleteId);
+            foreach (SongsArtists songArtistEntity in songsArtistsEntities)
+            {
+                songsArtistsRepo.Delete(songArtistEntity);
+            }
+
+            SongsRepository songsRepo = new SongsRepository(Constants.SongsPath);
+            Song songToDelete = songsRepo.GetAll(s => s.Id == deleteId).FirstOrDefault();
+            if (songToDelete == null)
+            {
+                Console.WriteLine("There is no song with that Id.");
+                Console.ReadKey(true);
+                return;
+            }
+            songsRepo.Delete(songToDelete);
+            Console.WriteLine("Song deleted successfully!");
+            Console.ReadKey(true);
         }
     }
 }
