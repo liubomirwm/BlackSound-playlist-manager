@@ -10,7 +10,7 @@ namespace BlackSound_playlist_manager
 {
     class MainClass
     {
-        static void Main(string[] args) //IMPORTANT: To implement DeleteArtist!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        static void Main(string[] args) //To refactore DeleteArtist after PlaylistView and playlist repositories are ready!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         {
             while (true)
             {
@@ -27,7 +27,8 @@ namespace BlackSound_playlist_manager
                 }
                 else if (AuthenticationService.LoggedUser != null && AuthenticationService.LoggedUser.IsAdministrator == false)
                 {
-                    //RegularUserView regularUserView = new RegularUserView();
+                    PlaylistView playlistView = new PlaylistView();
+                    playlistView.Show();
                 }
             }
         }

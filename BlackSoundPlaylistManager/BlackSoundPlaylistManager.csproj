@@ -52,20 +52,24 @@
     <Compile Include="Entity\UsersPlaylists.cs" />
     <Compile Include="Enums\AdminViewOption.cs" />
     <Compile Include="Enums\ArtistsManagementOption.cs" />
+    <Compile Include="Enums\PlaylistOption.cs" />
     <Compile Include="Enums\SongsViewOptions.cs" />
     <Compile Include="Helpers\Constants.cs" />
     <Compile Include="MainClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\ArtistsRepository.cs" />
     <Compile Include="Repository\BaseRepository.cs" />
+    <Compile Include="Repository\PlaylistsRepository.cs" />
     <Compile Include="Repository\PlaylistsSongsRepository.cs" />
     <Compile Include="Repository\SongsArtistsRepository.cs" />
     <Compile Include="Repository\SongsRepository.cs" />
+    <Compile Include="Repository\UsersPlaylistsRepository.cs" />
     <Compile Include="Repository\UsersRepository.cs" />
     <Compile Include="Services\AuthenticationService.cs" />
     <Compile Include="Views\AdminView.cs" />
     <Compile Include="Views\ArtistsView.cs" />
     <Compile Include="Views\LoginView.cs" />
+    <Compile Include="Views\PlaylistView.cs" />
     <Compile Include="Views\SongsView.cs" />
   </ItemGroup>
   <ItemGroup>

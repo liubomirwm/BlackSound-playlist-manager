@@ -8,9 +8,12 @@ namespace BlackSound_playlist_manager.Helpers
 {
     public static class Constants
     {
-        public static string ArtistsPath = "artists.txt";
-        public static string SongsPath = "songs.txt";
-        public static string PlaylistsSongsPath = "playlistssongs.txt";
-        public static string SongsArtistsPath = "songsartists.txt";
+        public const string ArtistsPath = "../../Data/artists.txt";
+        public const string SongsPath = "../../Data/songs.txt";
+        public const string PlaylistsSongsPath = "../../Data/playlistssongs.txt";
+        public const string SongsArtistsPath = "../../Data/songsartists.txt";
+        public const string PlaylistsPath = "../../Data/playlists.txt";
+        public const string UsersPath = "../../Data/users.txt";
+        public const string UsersPlaylistsPath = "../../Data/usersplaylists.txt";
     }
 }

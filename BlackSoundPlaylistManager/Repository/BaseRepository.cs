@@ -52,7 +52,7 @@ namespace BlackSound_playlist_manager.Repository
         {
             FileStream ifs = new FileStream(this.filePath, FileMode.OpenOrCreate);
             StreamReader sr = new StreamReader(ifs);
-            string tempFilePath = "temp." + this.filePath;
+            string tempFilePath = this.filePath + ".temp";
             FileStream ofs = new FileStream(tempFilePath, FileMode.OpenOrCreate);
             StreamWriter sw = new StreamWriter(ofs);
             try
@@ -149,7 +149,7 @@ namespace BlackSound_playlist_manager.Repository
 
         public void Delete(T itemForDeletion)
         {
-            string tempFilePath = "temp." + this.filePath;
+            string tempFilePath = this.filePath + ".temp";
             FileStream ifs = new FileStream(this.filePath, FileMode.OpenOrCreate);
             StreamReader sr = new StreamReader(ifs);
 

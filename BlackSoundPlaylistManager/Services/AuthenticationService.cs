@@ -1,4 +1,5 @@
 ﻿using BlackSound_playlist_manager.Entity;
+using BlackSound_playlist_manager.Helpers;
 using BlackSound_playlist_manager.Repository;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace BlackSound_playlist_manager.Services
 
         public static void AuthenticateUser(string email, string password)
         {
-            UsersRepository userRepo = new UsersRepository("users.txt");
+            UsersRepository userRepo = new UsersRepository(Constants.UsersPath);
             LoggedUser = userRepo.GetUserByUserNameAndPassword(email, password);
         }
 

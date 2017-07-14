@@ -202,6 +202,7 @@ namespace BlackSound_playlist_manager.Views
                 Console.ReadKey(true);
                 return;
             }
+            Console.Clear();
             Console.WriteLine("Old song title: {0}", song.Title);
             string newSongTitle;
             bool isEmptyName;
