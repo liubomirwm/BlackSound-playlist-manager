@@ -33,7 +33,10 @@ namespace BlackSound_playlist_manager.Views
                         DeletePlaylist();
                         break;
                     case PlaylistOption.SharePlaylist:
-                        //SharePlaylist();
+                        SharePlaylist();
+                        break;
+                    case PlaylistOption.AddSongToPlaylist:
+                        //AddSongToPlaylist();
                         break;
                     default:
                         throw new NotImplementedException("Reached default - this shouldn't happen in this case!");
@@ -287,6 +290,12 @@ namespace BlackSound_playlist_manager.Views
             }
 
             Console.Clear();
+            if (playlists.Count == 0)
+            {
+                Console.WriteLine("You have no playlists yet.");
+                Console.ReadKey(true);
+                return;
+            }
             foreach (Playlist playlist in playlists)
             {
                 Console.WriteLine("*******************************");
@@ -346,6 +355,95 @@ namespace BlackSound_playlist_manager.Views
             usersPlaylistsRepo.Delete(usersPlaylistsEntity);
             playlistsRepo.Delete(playlistToDelete);
             Console.WriteLine("Playlist successfully deleted!");
+            Console.ReadKey(true);
+        }
+
+        public void SharePlaylist()
+        {
+            UsersRepository usersRepo = new UsersRepository(Constants.UsersPath);
+            int currentUserId = AuthenticationService.LoggedUser.Id;
+            List<User> users = usersRepo.GetAll(u => u.IsAdministrator != true && u.Id != currentUserId);
+            Console.Clear();
+            if (users.Count == 0)
+            {
+                Console.WriteLine("There are currently no users with whom you can share a playlist.");
+                Console.ReadKey(true);
+                return;
+            }
+            foreach (User user in users)
+            {
+                Console.WriteLine("**************************");
+                Console.WriteLine("Id: {0}", user.Id);
+                Console.WriteLine("Name: {0}", user.DisplayName);
+                Console.WriteLine("**************************");
+            }
+
+            Console.WriteLine();
+            Console.Write("Enter Id of user with whom you will share playlist: ");
+            int userId = 0;
+            bool isIntId = int.TryParse(Console.ReadLine(), out userId);
+            while (isIntId == false)
+            {
+                Console.WriteLine("User Id can only be an integer number. Try again!!");
+                Console.ReadKey(true);
+                isIntId = int.TryParse(Console.ReadLine(), out userId);
+            }
+
+            bool isValidUser = false;
+            foreach (User user in users)
+            {
+                if (user.Id == userId)
+                {
+                    isValidUser = true;
+                    break;
+                }
+            }
+
+            if (isValidUser == false)
+            {
+                Console.WriteLine("You cannot share a playlist with that user!");
+                Console.ReadKey(true);
+                return;
+            }
+
+            PlaylistsRepository playlistsRepo = new PlaylistsRepository(Constants.PlaylistsPath);
+            UsersPlaylistsRepository usersPlaylistsRepo = new UsersPlaylistsRepository(Constants.UsersPlaylistsPath);
+            List<UsersPlaylists> usersPlaylistsEntities = usersPlaylistsRepo.GetAll(upe => upe.UserId == currentUserId);
+            List<Playlist> playlists = new List<Playlist>();
+            foreach (UsersPlaylists usersPlaylistsEntity in usersPlaylistsEntities)
+            {
+                Playlist playlist = playlistsRepo.GetAll(p => p.Id == usersPlaylistsEntity.PlaylistId).FirstOrDefault();
+                playlists.Add(playlist);
+            }
+
+            Console.Clear();
+            foreach (Playlist playlist in playlists)
+            {
+                Console.WriteLine("****************************");
+                Console.WriteLine("Id: {0}", playlist.Id);
+                Console.WriteLine("Name: {0}", playlist.Name);
+                Console.WriteLine("Description: {0}", playlist.Description);
+                Console.WriteLine("****************************");
+            }
+
+            Console.WriteLine();
+            Console.Write("Enter id of playlist to share: ");
+            isIntId = false;
+            int playlistShareId = 0;
+            isIntId = int.TryParse(Console.ReadLine(), out playlistShareId);
+            while (isIntId == false)
+            {
+                Console.WriteLine("Id can only be an integer number. Try again!!");
+                Console.ReadKey(true);
+                Console.Write("Enter id of playlist to share: ");
+                isIntId = int.TryParse(Console.ReadLine(), out playlistShareId);
+            }
+
+            UsersPlaylists newUsersPlaylistsEntity = new UsersPlaylists(); //TODO: Enforce sharing restrictions with checks.
+            newUsersPlaylistsEntity.PlaylistId = playlistShareId;
+            newUsersPlaylistsEntity.UserId = userId;
+            usersPlaylistsRepo.Save(newUsersPlaylistsEntity);
+            Console.WriteLine("Playlist shared successfully!");
             Console.ReadKey(true);
         }
     }

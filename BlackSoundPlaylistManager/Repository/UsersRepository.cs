@@ -42,14 +42,22 @@ namespace BlackSound_playlist_manager.Repository
             }
         }
 
-        public override void PopulateEntity(StreamReader sr, User item)
+        public override void PopulateEntity(StreamReader sr, User user)
         {
-            throw new NotImplementedException();
+            user.Id = Convert.ToInt32(sr.ReadLine());
+            user.Email = sr.ReadLine();
+            user.Password = sr.ReadLine();
+            user.DisplayName = sr.ReadLine();
+            user.IsAdministrator = Convert.ToBoolean(sr.ReadLine());
         }
 
-        public override void WriteEntity(StreamWriter sw, User item)
+        public override void WriteEntity(StreamWriter sw, User user)
         {
-            throw new NotImplementedException();
+            sw.WriteLine(user.Id);
+            sw.WriteLine(user.Email);
+            sw.WriteLine(user.Password);
+            sw.WriteLine(user.DisplayName);
+            sw.WriteLine(user.IsAdministrator);
         }
     }
 }
