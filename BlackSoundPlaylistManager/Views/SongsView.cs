@@ -320,6 +320,13 @@ namespace BlackSound_playlist_manager.Views
                 Console.ReadKey(true);
                 return;
             }
+
+            PlaylistsSongsRepository playlistsSongsRepo = new PlaylistsSongsRepository(Constants.PlaylistsSongsPath);
+            List<PlaylistsSongs> playlistsSongsEntities = playlistsSongsRepo.GetAll(pse => pse.SongId == deleteId);
+            foreach (PlaylistsSongs playlistSongsEntity in playlistsSongsEntities)
+            {
+                playlistsSongsRepo.Delete(playlistSongsEntity);
+            }
             songsRepo.Delete(songToDelete);
             Console.WriteLine("Song deleted successfully!");
             Console.ReadKey(true);
