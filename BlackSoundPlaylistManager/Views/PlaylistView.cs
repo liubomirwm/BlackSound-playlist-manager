@@ -24,7 +24,7 @@ namespace BlackSound_playlist_manager.Views
                         AddPlaylist();
                         break;
                     case PlaylistOption.EditPlaylist:
-                        //EditPlaylist();
+                        EditPlaylist();
                         break;
                     case PlaylistOption.ViewAllPlaylists:
                         //ViewAllPlaylists();
@@ -96,24 +96,24 @@ namespace BlackSound_playlist_manager.Views
             Console.Write("Enter playlist description: ");
             newPlaylist.Description = Console.ReadLine();
 
-            bool incorrectInput;
+            bool isIncorrectInput;
             string isPublic;
             do
             {
-                incorrectInput = false;
+                isIncorrectInput = false;
                 Console.Write("New playlist will be public(yes/no): ");
                 isPublic = Console.ReadLine();
                 if (!(isPublic.ToLower() == "yes" ^ isPublic.ToLower() == "no"))
                 {
-                    incorrectInput = true;
+                    isIncorrectInput = true;
                 }
 
-                if (incorrectInput == true)
+                if (isIncorrectInput == true)
                 {
                     Console.WriteLine("You can only enter \"yes\" and \"no\". Try again!");
                     Console.ReadKey(true);
                 }
-            } while (incorrectInput == true);
+            } while (isIncorrectInput == true);
 
             if (isPublic == "yes")
             {
@@ -126,15 +126,151 @@ namespace BlackSound_playlist_manager.Views
 
             PlaylistsRepository playlistsRepo = new PlaylistsRepository(Constants.PlaylistsPath);
             int playlistId = playlistsRepo.Save(newPlaylist);
-            int userId = AuthenticationService.LoggedUser.Id;
+            int currentUserId = AuthenticationService.LoggedUser.Id;
             UsersPlaylists usersPlaylistsEntity = new UsersPlaylists();
             usersPlaylistsEntity.PlaylistId = playlistId;
-            usersPlaylistsEntity.UserId = userId;
+            usersPlaylistsEntity.UserId = currentUserId;
             UsersPlaylistsRepository usersPlaylistsRepo = new UsersPlaylistsRepository(Constants.UsersPlaylistsPath);
             usersPlaylistsRepo.Save(usersPlaylistsEntity);
             Console.WriteLine("Playlist added successfuly!");
             Console.ReadKey(true);
-            
+
+        }
+
+        public void EditPlaylist()
+        {
+            PlaylistsRepository playlistsRepo = new PlaylistsRepository(Constants.PlaylistsPath);
+            UsersPlaylistsRepository usersPlaylistsRepo = new UsersPlaylistsRepository(Constants.UsersPlaylistsPath);
+            int currentUserId = AuthenticationService.LoggedUser.Id;
+            List<UsersPlaylists> usersPlaylistsEntities = usersPlaylistsRepo.GetAll(upe => upe.UserId == currentUserId);
+            List<Playlist> playlists = new List<Playlist>();
+            foreach (UsersPlaylists usersPlaylistsEntity in usersPlaylistsEntities)
+            {
+                Playlist playlist = playlistsRepo.GetAll(p => p.Id == usersPlaylistsEntity.PlaylistId).FirstOrDefault();
+                playlists.Add(playlist);
+            }
+
+            Console.Clear();
+            foreach (Playlist playlist in playlists)
+            {
+                Console.WriteLine("*******************************");
+                Console.WriteLine("Id: {0}", playlist.Id);
+                Console.WriteLine("Playlist Name: {0}", playlist.Name);
+                if (!String.IsNullOrWhiteSpace(playlist.Description))
+                {
+                    Console.WriteLine("Description: {0}", playlist.Description);
+                }
+
+                if (playlist.IsPublic == true)
+                {
+                    Console.WriteLine("Is public: yes");
+                }
+                else
+                {
+                    Console.WriteLine("Is public: no");
+                }
+                Console.WriteLine("*******************************");
+            }
+
+            Console.WriteLine();
+            int editId = 0;
+            bool isIntId = false;
+            do
+            {
+                Console.Write("Enter id to edit: ");
+                isIntId = int.TryParse(Console.ReadLine(), out editId);
+                if (isIntId == false)
+                {
+                    Console.WriteLine("Only integer numbers can be entered for IDs. Try again!!");
+                    Console.ReadKey(true);
+                }
+            } while (isIntId == false);
+
+            bool hasRightsToEdit = false;
+            foreach (UsersPlaylists usersPlaylistsEntity in usersPlaylistsEntities)
+            {
+                if (editId == usersPlaylistsEntity.PlaylistId)
+                {
+                    hasRightsToEdit = true;
+                    break;
+                }
+            }
+
+            if (hasRightsToEdit == false)
+            {
+                Console.WriteLine("Playlist with id {0} does not exist or you have no rights to edit!", editId);
+                Console.ReadKey(true);
+                return;
+            }
+            Playlist playlistToEdit = null;
+            foreach (Playlist playlist in playlists)
+            {
+                if (playlist.Id == editId)
+                {
+                    playlistToEdit = playlist;
+                    break;
+                }
+            }
+
+            Console.Clear();
+            Console.WriteLine("Old name: {0}", playlistToEdit.Name);
+            string newName;
+            do
+            {
+                Console.Write("New name: ");
+                newName = Console.ReadLine();
+                if (String.IsNullOrWhiteSpace(newName))
+                {
+                    Console.WriteLine("Playlist name cannot be empty. Try Again!!");
+                    Console.ReadKey(true);
+                }
+
+            } while (String.IsNullOrWhiteSpace(newName));
+            playlistToEdit.Name = newName;
+
+            Console.WriteLine("Old description: {0}", playlistToEdit.Description);
+            Console.Write("New description: ");
+            playlistToEdit.Description = Console.ReadLine();
+            if (playlistToEdit.IsPublic)
+            {
+                Console.WriteLine("Playlist is public: yes");
+            }
+            else
+            {
+                Console.WriteLine("Playlist is public: no");
+            }
+
+            bool isIncorrectInput;
+            string isPublic;
+            do
+            {
+                isIncorrectInput = false;
+                Console.Write("New playlist will be public(yes/no): ");
+                isPublic = Console.ReadLine();
+                if (!(isPublic.ToLower() == "yes" ^ isPublic.ToLower() == "no"))
+                {
+                    isIncorrectInput = true;
+                }
+
+                if (isIncorrectInput == true)
+                {
+                    Console.WriteLine("You can only enter \"yes\" and \"no\". Try again!");
+                    Console.ReadKey(true);
+                }
+            } while (isIncorrectInput == true);
+
+            if (isPublic == "yes")
+            {
+                playlistToEdit.IsPublic = true;
+            }
+            else
+            {
+                playlistToEdit.IsPublic = false;
+            }
+
+            playlistsRepo.Save(playlistToEdit);
+            Console.WriteLine("Playlist edited successfully!");
+            Console.ReadKey(true);
         }
     }
 }
