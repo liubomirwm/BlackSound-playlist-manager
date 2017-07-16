@@ -8,6 +8,6 @@ namespace BlackSound_playlist_manager.Enums
 {
     public enum PlaylistOption
     {
-        AddPlaylist, EditPlaylist, ViewAllPlaylists, DeletePlaylist, SharePlaylist
+        AddPlaylist, EditPlaylist, ViewUserPlaylists, DeletePlaylist, SharePlaylist
     }
 }

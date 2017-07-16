@@ -26,7 +26,7 @@ namespace BlackSound_playlist_manager.Views
                         EditSong();
                         break;
                     case SongsViewOptions.ViewSongs:
-                        ViewSongs();
+                        ViewSongs(true);
                         break;
                     case SongsViewOptions.DeleteSong:
                         DeleteSong();
@@ -254,7 +254,7 @@ namespace BlackSound_playlist_manager.Views
 
         }
 
-        public void ViewSongs(bool calledFromDelete = false)
+        public void ViewSongs(bool calledFromSongsView = false)
         {
             SongsRepository songsRepo = new SongsRepository(Constants.SongsPath);
             SongsArtistsRepository songsArtistsRepo = new SongsArtistsRepository(Constants.SongsArtistsPath);
@@ -292,7 +292,7 @@ namespace BlackSound_playlist_manager.Views
                 }
                 Console.WriteLine("********************************");
             }
-            if (calledFromDelete == false)
+            if (calledFromSongsView)
             {
                 Console.ReadKey(true);
             }
@@ -301,7 +301,7 @@ namespace BlackSound_playlist_manager.Views
 
         public void DeleteSong()
         {
-            ViewSongs(true);
+            ViewSongs(); //TODO: Refactore with do...while loop or simple while loop like in the bookmarked while loop.
             Console.WriteLine();
             Console.Write("Enter id to delete: ");
             int deleteId = Convert.ToInt32(Console.ReadLine());

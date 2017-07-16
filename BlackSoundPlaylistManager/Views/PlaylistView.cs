@@ -26,11 +26,11 @@ namespace BlackSound_playlist_manager.Views
                     case PlaylistOption.EditPlaylist:
                         EditPlaylist();
                         break;
-                    case PlaylistOption.ViewAllPlaylists:
-                        //ViewAllPlaylists();
+                    case PlaylistOption.ViewUserPlaylists:
+                        ViewUserPlaylists(true);
                         break;
                     case PlaylistOption.DeletePlaylist:
-                        //DeletePlaylist();
+                        DeletePlaylist();
                         break;
                     case PlaylistOption.SharePlaylist:
                         //SharePlaylist();
@@ -60,7 +60,7 @@ namespace BlackSound_playlist_manager.Views
                     case ConsoleKey.E:
                         return PlaylistOption.EditPlaylist;
                     case ConsoleKey.V:
-                        return PlaylistOption.ViewAllPlaylists;
+                        return PlaylistOption.ViewUserPlaylists;
                     case ConsoleKey.D:
                         return PlaylistOption.DeletePlaylist;
                     case ConsoleKey.S:
@@ -77,7 +77,7 @@ namespace BlackSound_playlist_manager.Views
         {
             string inputPlaylistName;
             bool isEmptyName = false;
-            do
+            do //TODO: Refactore all do while loops with a simple while loop where possible (see bookmarked while loop for example)
             {
                 Console.Clear();
                 Console.Write("Enter playlist name: ");
@@ -270,6 +270,82 @@ namespace BlackSound_playlist_manager.Views
 
             playlistsRepo.Save(playlistToEdit);
             Console.WriteLine("Playlist edited successfully!");
+            Console.ReadKey(true);
+        }
+
+        public void ViewUserPlaylists(bool calledFromPlaylistsView = false)
+        {
+            PlaylistsRepository playlistsRepo = new PlaylistsRepository(Constants.PlaylistsPath);
+            UsersPlaylistsRepository usersPlaylistsRepo = new UsersPlaylistsRepository(Constants.UsersPlaylistsPath);
+            int currentUserId = AuthenticationService.LoggedUser.Id;
+            List<UsersPlaylists> usersPlaylistsEntities = usersPlaylistsRepo.GetAll(upe => upe.UserId == currentUserId);
+            List<Playlist> playlists = new List<Playlist>();
+            foreach (UsersPlaylists usersPlaylistsEntity in usersPlaylistsEntities)
+            {
+                Playlist playlist = playlistsRepo.GetAll(p => p.Id == usersPlaylistsEntity.PlaylistId).FirstOrDefault();
+                playlists.Add(playlist);
+            }
+
+            Console.Clear();
+            foreach (Playlist playlist in playlists)
+            {
+                Console.WriteLine("*******************************");
+                Console.WriteLine("Id: {0}", playlist.Id);
+                Console.WriteLine("Playlist Name: {0}", playlist.Name);
+                if (!String.IsNullOrWhiteSpace(playlist.Description))
+                {
+                    Console.WriteLine("Description: {0}", playlist.Description);
+                }
+
+                if (playlist.IsPublic == true)
+                {
+                    Console.WriteLine("Is public: yes");
+                }
+                else
+                {
+                    Console.WriteLine("Is public: no");
+                }
+                Console.WriteLine("*******************************");
+            }
+
+            if (calledFromPlaylistsView)
+            {
+                Console.ReadKey(true);
+            }
+        }
+
+        public void DeletePlaylist()
+        {
+            ViewUserPlaylists();
+            Console.WriteLine();
+            Console.Write("Enter id to delete: ");
+            int deleteId = 0;
+            int currentUserId = AuthenticationService.LoggedUser.Id;
+            bool isIntId = int.TryParse(Console.ReadLine(), out deleteId);
+            while (isIntId == false)
+            {
+                Console.WriteLine("Id can only be an integer number. Try again!!");
+                Console.ReadKey();
+                Console.Write("Enter id to delete: ");
+                isIntId = int.TryParse(Console.ReadLine(), out deleteId);
+            }
+
+            UsersPlaylistsRepository usersPlaylistsRepo = new UsersPlaylistsRepository(Constants.UsersPlaylistsPath);
+            PlaylistsRepository playlistsRepo = new PlaylistsRepository(Constants.PlaylistsPath);
+            UsersPlaylists usersPlaylistsEntity = usersPlaylistsRepo.GetAll(upe => upe.PlaylistId == deleteId && upe.UserId == currentUserId)
+                .FirstOrDefault();
+
+            if (usersPlaylistsEntity == null)
+            {
+                Console.WriteLine("Playlist with id {0} does not exist or you have no rights to delete!", deleteId);
+                Console.ReadKey();
+                return;
+            }
+
+            Playlist playlistToDelete = playlistsRepo.GetAll(p => p.Id == deleteId).FirstOrDefault();
+            usersPlaylistsRepo.Delete(usersPlaylistsEntity);
+            playlistsRepo.Delete(playlistToDelete);
+            Console.WriteLine("Playlist successfully deleted!");
             Console.ReadKey(true);
         }
     }
