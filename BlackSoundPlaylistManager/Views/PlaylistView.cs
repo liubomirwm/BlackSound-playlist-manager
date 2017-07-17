@@ -36,7 +36,7 @@ namespace BlackSound_playlist_manager.Views
                         SharePlaylist();
                         break;
                     case PlaylistOption.AddSongToPlaylist:
-                        //AddSongToPlaylist();
+                        AddSongToPlaylist();
                         break;
                     default:
                         throw new NotImplementedException("Reached default - this shouldn't happen in this case!");
@@ -54,6 +54,7 @@ namespace BlackSound_playlist_manager.Views
                 Console.WriteLine("[V]iew all Playlists");
                 Console.WriteLine("[D]elete Playlist");
                 Console.WriteLine("[S]hare a playlist");
+                Console.WriteLine("Add a song [T]o Playlist");
                 Console.WriteLine("Press one of the keys above to select option.");
                 ConsoleKeyInfo cki = Console.ReadKey(true);
                 switch (cki.Key)
@@ -68,6 +69,8 @@ namespace BlackSound_playlist_manager.Views
                         return PlaylistOption.DeletePlaylist;
                     case ConsoleKey.S:
                         return PlaylistOption.SharePlaylist;
+                    case ConsoleKey.T:
+                        return PlaylistOption.AddSongToPlaylist;
                     default:
                         Console.WriteLine("You have entered an invalid option. Try again with one of the available ones!!");
                         Console.ReadKey(true);
@@ -358,7 +361,7 @@ namespace BlackSound_playlist_manager.Views
             Console.ReadKey(true);
         }
 
-        public void SharePlaylist()
+        public void SharePlaylist() //TODO: Ensure there are checks if playlist is already shared.
         {
             UsersRepository usersRepo = new UsersRepository(Constants.UsersPath);
             int currentUserId = AuthenticationService.LoggedUser.Id;
@@ -444,6 +447,65 @@ namespace BlackSound_playlist_manager.Views
             newUsersPlaylistsEntity.UserId = userId;
             usersPlaylistsRepo.Save(newUsersPlaylistsEntity);
             Console.WriteLine("Playlist shared successfully!");
+            Console.ReadKey(true);
+        }
+
+        public void AddSongToPlaylist()
+        {
+            SongsView.ViewSongs();
+            Console.WriteLine();
+            Console.Write("Enter id of song to add: ");
+            int songId = 0;
+            bool isIntSongId = int.TryParse(Console.ReadLine(), out songId);
+            while (isIntSongId == false)
+            {
+                Console.WriteLine("Song id can only be an integer number. Try again!");
+                Console.ReadKey(true);
+                Console.Write("Enter id of song to add: ");
+                isIntSongId = int.TryParse(Console.ReadLine(), out songId);
+            }
+
+            SongsRepository songsRepo = new SongsRepository(Constants.SongsPath);
+            if (songsRepo.EntityExists(s => s.Id == songId) == false)
+            {
+                Console.WriteLine("Song with id {0} doesn't exist!", songId);
+                Console.ReadKey(true);
+                return;
+            }
+
+            ViewUserPlaylists();
+            Console.Write("Select id of playlist you would add to: ");
+            int playlistId = 0;
+            bool isIntPlaylistId = int.TryParse(Console.ReadLine(), out playlistId);
+            while (isIntPlaylistId == false)
+            {
+                Console.WriteLine("Song id can only be an integer number. Try again!");
+                Console.ReadKey(true);
+                Console.Write("Enter id of song to add: ");
+                isIntPlaylistId = int.TryParse(Console.ReadLine(), out playlistId);
+            }
+
+            UsersPlaylistsRepository usersPlaylistsRepo = new UsersPlaylistsRepository(Constants.UsersPlaylistsPath);
+            int currentUserId = AuthenticationService.LoggedUser.Id;
+            if (usersPlaylistsRepo.EntityExists(upe => upe.PlaylistId == playlistId && upe.UserId == currentUserId) == false)
+            {
+                Console.WriteLine("Playlist does not exist exist or you have no rights to add songs to it!");
+                Console.ReadKey(true);
+                return;
+            }
+            PlaylistsSongs playlistSongsEntity = new PlaylistsSongs();
+            playlistSongsEntity.SongId = songId;
+            playlistSongsEntity.PlaylistId = playlistId;
+            PlaylistsSongsRepository playlistsSongsRepo = new PlaylistsSongsRepository(Constants.PlaylistsSongsPath);
+            if (playlistsSongsRepo.EntityExists(p => p.PlaylistId == playlistSongsEntity.PlaylistId && p.SongId == playlistSongsEntity.SongId))
+            {
+                Console.WriteLine("The selected song is already in that playlist!");
+                Console.ReadKey(true);
+                return;
+            }
+
+            playlistsSongsRepo.Save(playlistSongsEntity);
+            Console.WriteLine("Song successfully added to playlist");
             Console.ReadKey(true);
         }
     }

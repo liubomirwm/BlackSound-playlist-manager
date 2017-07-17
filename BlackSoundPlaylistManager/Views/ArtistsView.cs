@@ -26,7 +26,7 @@ namespace BlackSound_playlist_manager.Views
                         EditArtist();
                         break;
                     case ArtistsManagementOption.ViewArtists:
-                        ViewArtists();
+                        ViewArtists(true);
                         break;
                     case ArtistsManagementOption.DeleteArtist:
                         DeleteArtist();
@@ -102,7 +102,7 @@ namespace BlackSound_playlist_manager.Views
             return returnId;
         }
 
-        internal void ViewArtists()
+        internal void ViewArtists(bool calledFromArtistsView = false)
         {
             ArtistsRepository artistsRepo = new ArtistsRepository(Constants.ArtistsPath);
             List<Artist> artists = artistsRepo.GetAll();
@@ -114,7 +114,10 @@ namespace BlackSound_playlist_manager.Views
                 Console.WriteLine("Artist name: {0}", artist.Name);
                 Console.WriteLine("***************************************");
             }
-            Console.ReadKey(true);
+            if (calledFromArtistsView == true)
+            {
+                Console.ReadKey(true);
+            }
         }
 
         public void EditArtist()
@@ -161,19 +164,10 @@ namespace BlackSound_playlist_manager.Views
 
         public void DeleteArtist()
         {
-            ArtistsRepository artistsRepo = new ArtistsRepository(Constants.ArtistsPath);
-            List<Artist> artists = artistsRepo.GetAll();
-            Console.Clear();
-            foreach (Artist artistEntity in artists)
-            {
-                Console.WriteLine("***************************************");
-                Console.WriteLine("Id: {0}", artistEntity.Id);
-                Console.WriteLine("Artist name: {0}", artistEntity.Name);
-                Console.WriteLine("***************************************");
-            }
+            ViewArtists();
             Console.WriteLine();
             InputId:
-            Console.Write("Enter user id to delete: ");
+            Console.Write("Enter artist id to delete: ");
             int deleteId;
             bool isInt = int.TryParse(Console.ReadLine(), out deleteId);
             while (isInt == false)
@@ -182,7 +176,37 @@ namespace BlackSound_playlist_manager.Views
                 Console.ReadKey(true);
                 goto InputId;
             }
+
+            ArtistsRepository artistsRepo = new ArtistsRepository(Constants.ArtistsPath);
             Artist artist = artistsRepo.GetAll(a => a.Id == deleteId).FirstOrDefault();
+            SongsArtistsRepository songsArtistsRepo = new SongsArtistsRepository(Constants.SongsArtistsPath);
+            List<SongsArtists> songsArtistsEntities = songsArtistsRepo.GetAll(sae => sae.ArtistId == deleteId);
+            SongsRepository songsRepo = new SongsRepository(Constants.SongsPath);
+            List<Song> songs = new List<Song>();
+            foreach (SongsArtists songsArtistsEntity in songsArtistsEntities)
+            {
+                Song song = songsRepo.GetAll(s => s.Id == songsArtistsEntity.SongId).FirstOrDefault();
+                songs.Add(song);
+            }
+
+            PlaylistsSongsRepository playlistsSongsRepo = new PlaylistsSongsRepository(Constants.PlaylistsSongsPath);
+            List<PlaylistsSongs> playlistsSongsEntities = new List<PlaylistsSongs>();
+            foreach (SongsArtists songsArtistsEntity in songsArtistsEntities)
+            {
+                PlaylistsSongs playlistSongEntity = playlistsSongsRepo.GetAll(pse => pse.SongId == songsArtistsEntity.SongId).FirstOrDefault();
+                playlistsSongsEntities.Add(playlistSongEntity);
+            }
+
+            foreach (PlaylistsSongs playlistsSongsEntity in playlistsSongsEntities)
+            {
+                playlistsSongsRepo.Delete(playlistsSongsEntity);
+            }
+
+            foreach (Song song in songs)
+            {
+                songsRepo.Delete(song);
+            }
+
             artistsRepo.Delete(artist);
             Console.WriteLine("Artist deleted successfully!");
             Console.ReadKey(true);

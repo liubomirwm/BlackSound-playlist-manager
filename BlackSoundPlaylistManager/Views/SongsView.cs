@@ -168,17 +168,7 @@ namespace BlackSound_playlist_manager.Views
 
         public void EditSong()
         {
-            SongsRepository songsRepo = new SongsRepository(Constants.SongsPath);
-            List<Song> songs = songsRepo.GetAll();
-            Console.Clear();
-            foreach (Song songEntity in songs)
-            {
-                Console.WriteLine("************************************");
-                Console.WriteLine("Id: {0}", songEntity.Id);
-                Console.WriteLine("Song Title: {0}", songEntity.Title);
-                Console.WriteLine("Song release year: {0}", songEntity.Year);
-                Console.WriteLine("************************************");
-            }
+            ViewSongs();
             Console.WriteLine();
             int editId;
             bool isIntId;
@@ -247,14 +237,14 @@ namespace BlackSound_playlist_manager.Views
             } while (isIntYear == false || isCurrentOrPastYear == false);
 
             song.Year = newSongReleaseYear;
-            songsRepo.Save(song);
+            songRepo.Save(song);
             Console.WriteLine("Song edited successfully!");
             Console.ReadKey(true);
 
 
         }
 
-        public void ViewSongs(bool calledFromSongsView = false)
+        public static void ViewSongs(bool calledFromSongsView = false)
         {
             SongsRepository songsRepo = new SongsRepository(Constants.SongsPath);
             SongsArtistsRepository songsArtistsRepo = new SongsArtistsRepository(Constants.SongsArtistsPath);
