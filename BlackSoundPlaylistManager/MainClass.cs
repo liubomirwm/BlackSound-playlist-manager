@@ -10,7 +10,7 @@ namespace BlackSound_playlist_manager
 {
     class MainClass
     {
-        static void Main(string[] args) //TODO: Refactore DeleteArtist after PlaylistView and playlist repositories are ready!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        static void Main(string[] args)
         {
             while (true)
             {

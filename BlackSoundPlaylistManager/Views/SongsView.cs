@@ -168,7 +168,11 @@ namespace BlackSound_playlist_manager.Views
 
         public void EditSong()
         {
-            ViewSongs();
+            bool hasSongs = ViewSongs();
+            if (hasSongs == false)
+            {
+                return;
+            }
             Console.WriteLine();
             int editId;
             bool isIntId;
@@ -244,13 +248,19 @@ namespace BlackSound_playlist_manager.Views
 
         }
 
-        public static void ViewSongs(bool calledFromSongsView = false)
+        public static bool ViewSongs(bool calledFromSongsView = false)
         {
             SongsRepository songsRepo = new SongsRepository(Constants.SongsPath);
             SongsArtistsRepository songsArtistsRepo = new SongsArtistsRepository(Constants.SongsArtistsPath);
             ArtistsRepository artistsRepo = new ArtistsRepository(Constants.ArtistsPath);
             List<Song> songs = songsRepo.GetAll();
             Console.Clear();
+            if (songs.Count == 0)
+            {
+                Console.WriteLine("There are no songs in the system yet!");
+                Console.ReadKey(true);
+                return false;
+            }
             foreach (Song song in songs)
             {
                 Console.WriteLine("********************************");
@@ -286,12 +296,16 @@ namespace BlackSound_playlist_manager.Views
             {
                 Console.ReadKey(true);
             }
-
+            return true;
         }
 
         public void DeleteSong()
         {
-            ViewSongs(); //TODO: Refactore with do...while loop or simple while loop like in the bookmarked while loop.
+            bool hasSongs = ViewSongs(); //TODO: Refactore with do...while loop or simple while loop like in the bookmarked while loop.
+            if (hasSongs == false)
+            {
+                return;
+            }
             Console.WriteLine();
             Console.Write("Enter id to delete: ");
             int deleteId = Convert.ToInt32(Console.ReadLine());

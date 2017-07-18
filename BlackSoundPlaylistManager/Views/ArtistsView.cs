@@ -179,6 +179,12 @@ namespace BlackSound_playlist_manager.Views
 
             ArtistsRepository artistsRepo = new ArtistsRepository(Constants.ArtistsPath);
             Artist artist = artistsRepo.GetAll(a => a.Id == deleteId).FirstOrDefault();
+            if (artist == null)
+            {
+                Console.WriteLine("No artist with that Id exists in the system yet!");
+                Console.ReadKey(true);
+                return;
+            }
             SongsArtistsRepository songsArtistsRepo = new SongsArtistsRepository(Constants.SongsArtistsPath);
             List<SongsArtists> songsArtistsEntities = songsArtistsRepo.GetAll(sae => sae.ArtistId == deleteId);
             SongsRepository songsRepo = new SongsRepository(Constants.SongsPath);

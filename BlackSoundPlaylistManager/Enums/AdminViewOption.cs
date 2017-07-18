@@ -8,6 +8,6 @@ namespace BlackSound_playlist_manager.Enums
 {
     public enum AdminViewOption
     {
-        ManageSongs, ManageArtists
+        ManageSongs, ManageArtists, Logout
     }
 }

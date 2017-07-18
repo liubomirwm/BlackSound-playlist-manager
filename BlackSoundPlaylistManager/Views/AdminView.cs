@@ -28,6 +28,9 @@ namespace BlackSound_playlist_manager.Views
                         ArtistsView artistsView = new ArtistsView();
                         artistsView.Show();
                         break;
+                    case AdminViewOption.Logout:
+                        AuthenticationService.LoggedUser = null;
+                        return;
                     default:
                         break;
                 }
@@ -40,6 +43,7 @@ namespace BlackSound_playlist_manager.Views
             Console.Clear();
             Console.WriteLine("Manage [S]ongs");
             Console.WriteLine("Manage [A]rtists");
+            Console.WriteLine("[L]ogout");
             Console.WriteLine("Press one of the available keys to select option.");
             ConsoleKeyInfo cki = Console.ReadKey(true);
             switch (cki.Key)
@@ -48,6 +52,8 @@ namespace BlackSound_playlist_manager.Views
                     return AdminViewOption.ManageSongs;
                 case ConsoleKey.A:
                     return AdminViewOption.ManageArtists;
+                case ConsoleKey.L:
+                    return AdminViewOption.Logout;
                 default:
                     Console.WriteLine("You have pressed an invalid option. Try again with one of the available ones above.");
                     Console.ReadKey(true);
